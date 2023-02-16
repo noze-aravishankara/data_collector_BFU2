@@ -1,62 +1,114 @@
-### THIS IS THE EDDY VERSION
-
+from CONFIG.config_parser import config_parser
+from CONFIG.protocol_parser import protocol_parser
+from device_handler.BFU_RUNNER2 import *
 import sys
-
-print(sys.path)
-
-import time
 import os
-from observer import create_observers, Observer
-from utility import config_utils, file_utils, logger
-from MFC.sensirion.sensirion_sfc500 import ProgramCompleted, MFCUnableToStart
- 
-appConfig = config_utils.AppConfig("CONFIG/config.json", file_type='json')
-observers = create_observers(appConfig)
+from datetime import datetime as dt
+import time
+from csv import writer
+import threading
+import logging
+logging.basicConfig(level=logging.INFO)
 
-try:
-    for i in range(appConfig.cycle_period):
-        logger.get_logger().info("Updating publishers: second {}".format(i + 1))
-        # map(Observer.update, observers)
-        stability_check = True if (i + 1) % appConfig.stability_window == 0 else False
-        monitor_bool = True
-        for observer in observers:
-            observer.update(i + 1, monitor_bool, stability_check)
-            monitor_bool = False
-        time.sleep(1)
 
-    # map(Observer.terminate, observers)
-    for each in observers:
-        each.terminate()
+class BFU2:
+    """
+    ----------------PROPERTY OF NOZE----------------
 
-    logger.get_logger().info("\n***************** Successfully Closed Application.*****************\n")
+    TITLE: BFU 2 - Data Collector
 
-except ProgramCompleted:
-    import os
+    Description:
+        This class connects to any number of BFUs and collects data based
+        on a protocol file and config file (located in CONFIG/). The data will
+        be output to a folder in output. The default version of this app
+        works with BFU 2. With some modifications, it can work with BFU 1.
 
-    for each in observers:
-        each.terminate()
-    logger.get_logger().info("\n***************** Successfully Closed Application.*****************\n")
-    os._exit(1)
-except MFCUnableToStart:
-    import os
+        Notable issues:
+        1. If the serial number of the BFU 2 is changed, then the
+        sensor will output data at approximately 2Hz. To fix this we have to
+        re-flash the sensor. This is an issue that needs to addressed.
 
-    logger.get_logger().info("\n***************** Unable to start MFCs... Closing Application.*****************\n")
-    for each in observers:
-        each.terminate()
-    os._exit(1)
-except KeyboardInterrupt:
-    import os
-    import traceback
 
-    # traceback.print_exc()
-    for each in observers:
-        each.terminate()
-    os._exit(1)
-except Exception:
-    import os
-    import traceback
+    Attributes:
+        Config File: Can be found in CONFIG/config.json. Follow the defined in the file.
 
-    traceback.print_exc()
-    for each in observers:
-        each.terminate()
-    os._exit(1)
+        Timeout Rate: The time at which to timeout from the connection (optional)
+    Outputs:
+        Connection Status: If the connection succeeded or not
+        The current data output
+
+    =====================================
+    Current Version: 1.0 - February 16, 2023
+    =====================================
+    Revisions: [NONE]
+
+
+    TO-DOs:
+        1. Add concurrency
+        2. Respond to protocol file
+
+
+    Authors(s):
+    Adi Ravishankara (aravishankara@noze.ca)
+
+    ------------------------------------------------
+    """
+    def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json'):
+        # Obtaining test settings from config and protocol file
+        self._config = config_parser(config_file_path=config)
+        self.config = self._config.get_config_as_dict()
+        self._protocol = protocol_parser(protocol)
+        self.protocol = self._protocol.get_protocol_as_dict()
+
+        # Initializing the system
+        self.device_setup()
+        self.create_data_folder()
+        self.create_data_files()
+
+        # Running the test
+        self.temp_run_test()
+
+    def device_setup(self):
+        self.devices = [BFU_RUNNER(self._config.get_device_com_port(device), self._config.get_device_name(device))
+                        for device in self._config.get_devices()]
+        print(f'Number of BFUs Connected: {len(self.devices)}')
+
+    def folder_info(self):
+        self.now = dt.now()
+        self.now_ = self.now.strftime("%y%m%d_%H%M")
+        self.now_s = self.now.strftime("%y%m%d_%H%M%S")
+
+    def create_data_folder(self):
+        self.folder_info()
+        self.directory = f'{self._config.get_output_directory()}/' \
+                         f'{self.now_}' \
+                         f'_{self._config.get_output_file_prefix()}'
+        if not os.path.exists(self.directory):
+            os.mkdir(self.directory)
+        elif os.path.exists(self.directory):
+            print('Folder Exists, adding seconds to folder name.')
+            self.now_ = self.now_s
+            self.directory = f'{self._config.get_output_directory()}/' \
+                         f'{self.now_}' \
+                         f'_{self._config.get_output_file_prefix()}'
+            os.mkdir(self.directory)
+        else:
+            sys.exit()
+
+    def create_data_files(self):
+        for element in self.devices:
+            with open(f'{self.directory}/{self.now_}_{self._config.get_output_file_prefix()}'
+                      f'_{element.name}.csv', 'w') as f:
+                f.close()
+
+    def temp_run_test(self):
+        for i in range(10):
+            for j in self.devices:
+                j.get_new_data()
+        for j in self.devices:
+            M = j.get_complete_array()
+
+
+if __name__ == '__main__':
+    BFU2 = BFU2()
+
