@@ -19,16 +19,17 @@ class data_collector:
     def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json'):
         self._config = config_parser(config_file_path=config)
         self._protocol = protocol_parser(protocol_file_path=protocol)
-
-        self.device_setup()
         self.create_data_folder()
+        self.device_setup()
+
         self.temp_thread_handler()
 
     def device_setup(self):
         self.devices = []
         for device in self._config.get_devices():
             x, y, z = self._config.get_device_info(device)
-            self.devices.append(BFU(x, y, z))
+            fname = f'{self.directory}/{self.now_}_{self._config.get_output_file_prefix()}_{z}.csv'
+            self.devices.append(BFU(x, y, z, fname))
 
     def folder_info(self):
         self.now = dt.now()
@@ -61,12 +62,14 @@ class data_collector:
     def save_data_to_files(self, headers, data):
         for element in self.devices:
             f_name = f'{self.directory}/{self.now_}_{self._config.get_output_file_prefix()}_{element.name}.csv'
-            with open(f_name, 'w') as g:
+            with open(f_name, 'w', newline='') as g:
                 logging.info(f"Saving data to: {f_name}")
                 csv_writer = csv.writer(g, delimiter=',',)
                 csv_writer.writerow(headers)
                 csv_writer.writerows(data)
                 g.close()
+
+
 
     def temp_thread_handler(self):
         self.threads = []
@@ -100,11 +103,12 @@ class data_collector:
     def temp_end_thread_handler(self):
         for device in self.devices:
             device.data_collection_status = False
-            headers = device.headers
-            data = device.get_array()
+            #headers = device.headers
+            #data = device.get_array()
             #self.array_fixer(headers, data)
-            logging.debug(data)
-            self.save_data_to_files(headers, data)
+            #logging.debug(data)
+            #self.save_data_to_files(headers, data)
+        logging.info('--------DONE DATA COLLECTION---------')
 
 
 if __name__ == '__main__':
