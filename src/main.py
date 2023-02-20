@@ -87,7 +87,7 @@ class data_collector:
 
     def temp_experiment_handler(self):
         for step in self._protocol.get_step_names():
-            _ = threading.Thread(target=self.step_timer, args=(self._protocol.get_step_length(step),))
+            _ = threading.Thread(target=self.step_timer2, args=(self._protocol.get_step_length(step),))
             for device in self.devices:
                 device.trial_state = step
             logging.info(f'Setting {step} step for {self._protocol.get_step_length(step)} s')
@@ -98,6 +98,12 @@ class data_collector:
     def step_timer(self, sleep_time):
         time.sleep(sleep_time)
         logging.debug("Moving onto next step")
+
+    def step_timer2(self, sleep_time):
+        for i in range(sleep_time, 0, -1):
+            time.sleep(1)
+            if i < 4:
+                logging.warning(f'Switching to next step in: {i}')
 
     def array_fixer(self, headers, array):
         _ = np.asarray(headers)

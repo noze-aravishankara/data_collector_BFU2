@@ -11,13 +11,13 @@
       "data_type": "json"
     },
     "device1": {
-      "com_port": "COM10",
+      "com_port": "COM7",
       "baud_rate": 115200,
       "device_name": "BFU2",
       "data_type": "json"
     },
     "device2": {
-      "com_port": "COM11",
+      "com_port": "COM10",
       "baud_rate": 115200,
       "device_name": "BFU3",
       "data_type": "json"
