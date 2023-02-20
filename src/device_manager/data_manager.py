@@ -1,12 +1,13 @@
 import csv
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 class data_manager:
-    def __init__(self, fname):
+    def __init__(self, fname, log_level=logging.INFO):
         self.fname = fname
+        # logging.basicConfig(level=log_level)
         self.create_file()
 
     def create_file(self):

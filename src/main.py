@@ -1,7 +1,3 @@
-from CONFIG.config_parser import config_parser
-from CONFIG.protocol_parser import protocol_parser
-from device_manager.BFU import BFU
-
 import csv
 import logging
 import os
@@ -12,24 +8,32 @@ from datetime import datetime as dt
 
 import numpy as np
 
+from CONFIG.config_parser import config_parser
+from CONFIG.protocol_parser import protocol_parser
+from device_manager.BFU import BFU
+
 logging.basicConfig(level=logging.INFO)
 
-
 class data_collector:
-    def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json'):
+    def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json', log_level=logging.INFO):
+
         self._config = config_parser(config_file_path=config)
         self._protocol = protocol_parser(protocol_file_path=protocol)
         self.create_data_folder()
-        self.device_setup()
+        self.device_setup(log_level)
 
         self.temp_thread_handler()
 
-    def device_setup(self):
+    def device_setup(self, log_level):
         self.devices = []
         for device in self._config.get_devices():
             x, y, z = self._config.get_device_info(device)
             fname = f'{self.directory}/{self.now_}_{self._config.get_output_file_prefix()}_{z}.csv'
-            self.devices.append(BFU(x, y, z, fname))
+            self.devices.append(BFU(port=x,
+                                    baudrate=y,
+                                    name=z,
+                                    fname=fname,
+                                    log_level=log_level))
 
     def folder_info(self):
         self.now = dt.now()
@@ -103,13 +107,9 @@ class data_collector:
     def temp_end_thread_handler(self):
         for device in self.devices:
             device.data_collection_status = False
-            #headers = device.headers
-            #data = device.get_array()
-            #self.array_fixer(headers, data)
-            #logging.debug(data)
-            #self.save_data_to_files(headers, data)
         logging.info('--------DONE DATA COLLECTION---------')
 
 
 if __name__ == '__main__':
-    DC = data_collector(config='CONFIG/config.json')
+    level = logging.DEBUG
+    DC = data_collector(config='CONFIG/config.json', log_level=level)

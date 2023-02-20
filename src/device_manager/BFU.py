@@ -11,10 +11,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 class BFU:
-    def __init__(self, port='COM5', baudrate=115200, name='BFU1s', fname='../../output/BASE.csv'):
+    def __init__(self, port='COM5', baudrate=115200, name='BFU1s', fname='../../output/BASE.csv', log_level=logging.INFO):
         self.port = port
         self.baudrate = baudrate
         self.name = name
+        # logging.basicConfig(level=log_level)
 
         self.trial_state = 'pre-baseline'
         self.data_collection_status = False
@@ -69,7 +70,6 @@ class BFU:
         while self.data_collection_status:
             self.get_new_values()
         logging.info(f"Exiting Continuous Data Collection Loop for {self.name}")
-
 
 
 if __name__ == '__main__':
