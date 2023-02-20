@@ -1,0 +1,13 @@
+{
+  "output_directory": "../output",
+  "protocol_file": "CONFIG/test_protocol.yml",
+  "output_file_prefix": "BFU2_TEST",
+  "project_name": "BFU2_PROJECT",
+  "devices": {
+    "device0": {
+      "com_port": "COM5",
+      "baud_rate": 115200,
+      "device_name": "BFU1"
+    }
+  }
+}
