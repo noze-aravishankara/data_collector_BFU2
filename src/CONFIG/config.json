@@ -1,25 +1,19 @@
 {
   "output_directory": "../output",
-  "protocol_file": "CONFIG/test_protocol.yml",
-  "output_file_prefix": "BFU2_TEST",
+  "protocol_file": "CONFIG/rasp_short.yml",
+  "output_file_prefix": "PTFE-HUM-T002-V2-F3-R2",
   "project_name": "BFU2_PROJECT",
   "devices": {
     "device0": {
-      "com_port": "COM3",
+      "com_port": "/dev/ttyUSB3",
       "baud_rate": 115200,
       "device_name": "BFU1",
       "data_type": "json"
     },
     "device1": {
-      "com_port": "COM7",
+      "com_port": "/dev/ttyUSB4",
       "baud_rate": 115200,
       "device_name": "BFU2",
-      "data_type": "json"
-    },
-    "device2": {
-      "com_port": "COM10",
-      "baud_rate": 115200,
-      "device_name": "BFU3",
       "data_type": "json"
     }
   }

@@ -118,4 +118,4 @@ class data_collector:
 
 if __name__ == '__main__':
     level = logging.DEBUG
-    DC = data_collector(config='CONFIG/config.json', log_level=level)
+    DC = data_collector(config='CONFIG/config.json', protocol='CONFIG/rasp_short.json', log_level=level)
