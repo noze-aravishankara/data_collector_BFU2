@@ -27,8 +27,14 @@ class config_parser:
     def get_device_com_port(self, device='device0'):
         return self.config['devices'][device]['com_port']
 
+    def get_device_baudrate(self, device='device0'):
+        return self.config['devices'][device]['baud_rate']
+
     def get_device_name(self, device='device0'):
         return self.config['devices'][device]['device_name']
+
+    def get_device_info(self, device='device0'):
+        return self.get_device_com_port(device), self.get_device_baudrate(device), self.get_device_name(device)
 
     def get_project_name(self):
         return self.config['project_name']

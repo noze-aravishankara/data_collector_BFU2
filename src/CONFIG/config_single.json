@@ -7,14 +7,7 @@
     "device0": {
       "com_port": "COM5",
       "baud_rate": 115200,
-      "device_name": "BFU1",
-      "data_type": "json"
-    },
-    "device1": {
-      "com_port": "COM6",
-      "baud_rate": 115200,
-      "device_name": "BFU2",
-      "data_type": "array"
+      "device_name": "BFU1"
     }
   }
 }

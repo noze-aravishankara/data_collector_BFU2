@@ -2,21 +2,21 @@
 
 """
 Company     : NOZE
-Author      : Eddy Fraga
-Created on  : January 20, 2023
+Author      : Adi Ravishankara
+Created on  : February 16, 2023
 File type   : python
-File name   : BFU_RUNNER.py
+File name   : BFU_RUNNER2.py
 Description : Main python script used to interact with the BFU MSP430 module.
 Reference   : N/A
 """
 
 import sys
-#from .processBFU import processBfu
 from .serialComm import SerialComm
 from .constants import endMsg, jsonInfo
 import json
 from datetime import datetime as dt
 import logging
+import time
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,6 +31,7 @@ class BFU_RUNNER:
             sys.exit()
 
         self.set_trial_state('baseline')
+        self.data_collection_status = True
         print(f'Created device: {self.name}')
         self.create_data_array()
 
@@ -57,15 +58,16 @@ class BFU_RUNNER:
 
     def get_new_data(self):
         while not self.BFU.data_available():
+            print('passing')
+            time.sleep(0.1)
             pass
         else:
             self.now = dt.now()
-            logging.info('New Data Point')
             self.start_time = self.now
-
             _ = json.loads(self.BFU.get_data_until(endMsg.END_NVM_LINE))
             _ = [list(d.values()) for d in _['t']]
             _.append(self.trial_state)
+            logging.info(_)
             self.array.append(_)
 
     def create_data_array(self):
@@ -75,7 +77,9 @@ class BFU_RUNNER:
         self.trial_state = state
 
     def update_array(self):
+        _ = []
         _ = self.get_data_values(self.get_new_data())
+        logging.info(_)
         _.append(self.trial_state)
         self.array.append(_)
 
@@ -85,7 +89,12 @@ class BFU_RUNNER:
 
     def continuous_data_collector(self):
         while self.data_collection_status:
-            self.get_new_data()
+            self.update_array()
+
+    def temporary_data_collector(self, num_runs):
+        for i in range(num_runs):
+            self.update_array()
+            time.sleep(0.5)
 
 
 

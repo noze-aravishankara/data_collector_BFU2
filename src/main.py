@@ -8,6 +8,7 @@ import time
 from csv import writer
 import threading
 import logging
+import numpy as np
 logging.basicConfig(level=logging.INFO)
 
 
@@ -62,11 +63,12 @@ class BFU2:
 
         # Initializing the system
         self.device_setup()
-        self.create_data_folder()
-        self.create_data_files()
+        #self.create_data_folder()
+        #self.create_data_files()
 
         # Running the test
-        self.temp_run_test()
+        self.threaded_temp_run_test()
+        # self.temp_run_test()
 
     def device_setup(self):
         self.devices = [BFU_RUNNER(self._config.get_device_com_port(device), self._config.get_device_name(device))
@@ -107,6 +109,23 @@ class BFU2:
                 j.get_new_data()
         for j in self.devices:
             M = j.get_complete_array()
+            print(M)
+            #M = np.array(M)
+            #print(M.shape)
+
+    def threaded_temp_run_test(self):
+        self.threads = []
+        for j in self.devices:
+            _ = threading.Thread(target=j.temporary_data_collector(10))
+            logging.info(f"Inside the thread of: {j.name} ")
+            self.threads.append(_)
+            _.start()
+
+        for j in self.threads:
+            j.join()
+
+        for j in self.devices:
+            print(j.get_complete_array())
 
 
 if __name__ == '__main__':
