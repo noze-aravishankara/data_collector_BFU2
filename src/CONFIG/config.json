@@ -5,16 +5,22 @@
   "project_name": "BFU2_PROJECT",
   "devices": {
     "device0": {
-      "com_port": "COM5",
+      "com_port": "COM3",
       "baud_rate": 115200,
       "device_name": "BFU1",
       "data_type": "json"
     },
     "device1": {
-      "com_port": "COM6",
+      "com_port": "COM7",
       "baud_rate": 115200,
       "device_name": "BFU2",
-      "data_type": "array"
+      "data_type": "json"
+    },
+    "device2": {
+      "com_port": "COM10",
+      "baud_rate": 115200,
+      "device_name": "BFU3",
+      "data_type": "json"
     }
   }
 }

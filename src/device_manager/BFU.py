@@ -1,10 +1,9 @@
-import sys
-from .serialComm import SerialComm
-from .constants import endMsg, jsonInfo
-from datetime import datetime as dt
-import logging
 import json
-import time
+import logging
+import sys
+
+from .constants import endMsg
+from .serialComm import SerialComm
 
 logging.basicConfig(level=logging.INFO)
 
@@ -37,7 +36,7 @@ class BFU:
             pass
         else:
             _ = json.loads(self.device.get_data_until(endMsg.END_NVM_LINE))
-            logging.info(_)
+            logging.debug(_)
         return _
 
     def get_new_values(self):
@@ -45,12 +44,12 @@ class BFU:
 
     def shape_headers(self):
         _ = self.get_new_data()
-        _ = [list(d.keys()) for d in _['t']]
+        _ = [list(d.keys())[0] for d in _['t']]
         _.append('Trial State')
         self.headers = _
 
     def shape_data(self, data):
-        _ = [list(d.values()) for d in data['t']]
+        _ = [list(d.values())[0] for d in data['t']]
         _.append(self.trial_state)
         logging.debug(_)
         self.array.append(_)

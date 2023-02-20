@@ -1,79 +1,34 @@
 from CONFIG.config_parser import config_parser
 from CONFIG.protocol_parser import protocol_parser
-from device_handler.BFU_RUNNER2 import *
-import sys
-import os
-from datetime import datetime as dt
-import time
-from csv import writer
-import threading
+from device_manager.BFU import BFU
+
+import csv
 import logging
+import os
+import sys
+import threading
+import time
+from datetime import datetime as dt
+
 import numpy as np
+
 logging.basicConfig(level=logging.INFO)
 
 
-class BFU2:
-    """
-    ----------------PROPERTY OF NOZE----------------
-
-    TITLE: BFU 2 - Data Collector
-
-    Description:
-        This class connects to any number of BFUs and collects data based
-        on a protocol file and config file (located in CONFIG/). The data will
-        be output to a folder in output. The default version of this app
-        works with BFU 2. With some modifications, it can work with BFU 1.
-
-        Notable issues:
-        1. If the serial number of the BFU 2 is changed, then the
-        sensor will output data at approximately 2Hz. To fix this we have to
-        re-flash the sensor. This is an issue that needs to addressed.
-
-
-    Attributes:
-        Config File: Can be found in CONFIG/config.json. Follow the defined in the file.
-
-        Timeout Rate: The time at which to timeout from the connection (optional)
-    Outputs:
-        Connection Status: If the connection succeeded or not
-        The current data output
-
-    =====================================
-    Current Version: 1.0 - February 16, 2023
-    =====================================
-    Revisions: [NONE]
-
-
-    TO-DOs:
-        1. Add concurrency
-        2. Respond to protocol file
-
-
-    Authors(s):
-    Adi Ravishankara (aravishankara@noze.ca)
-
-    ------------------------------------------------
-    """
+class data_collector:
     def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json'):
-        # Obtaining test settings from config and protocol file
         self._config = config_parser(config_file_path=config)
-        self.config = self._config.get_config_as_dict()
-        self._protocol = protocol_parser(protocol)
-        self.protocol = self._protocol.get_protocol_as_dict()
+        self._protocol = protocol_parser(protocol_file_path=protocol)
 
-        # Initializing the system
         self.device_setup()
-        #self.create_data_folder()
-        #self.create_data_files()
-
-        # Running the test
-        self.threaded_temp_run_test()
-        # self.temp_run_test()
+        self.create_data_folder()
+        self.temp_thread_handler()
 
     def device_setup(self):
-        self.devices = [BFU_RUNNER(self._config.get_device_com_port(device), self._config.get_device_name(device))
-                        for device in self._config.get_devices()]
-        print(f'Number of BFUs Connected: {len(self.devices)}')
+        self.devices = []
+        for device in self._config.get_devices():
+            x, y, z = self._config.get_device_info(device)
+            self.devices.append(BFU(x, y, z))
 
     def folder_info(self):
         self.now = dt.now()
@@ -88,7 +43,7 @@ class BFU2:
         if not os.path.exists(self.directory):
             os.mkdir(self.directory)
         elif os.path.exists(self.directory):
-            print('Folder Exists, adding seconds to folder name.')
+            logging.warning('Folder Exists, adding seconds to folder name.')
             self.now_ = self.now_s
             self.directory = f'{self._config.get_output_directory()}/' \
                          f'{self.now_}' \
@@ -103,31 +58,54 @@ class BFU2:
                       f'_{element.name}.csv', 'w') as f:
                 f.close()
 
-    def temp_run_test(self):
-        for i in range(10):
-            for j in self.devices:
-                j.get_new_data()
-        for j in self.devices:
-            M = j.get_complete_array()
-            print(M)
-            #M = np.array(M)
-            #print(M.shape)
+    def save_data_to_files(self, headers, data):
+        for element in self.devices:
+            f_name = f'{self.directory}/{self.now_}_{self._config.get_output_file_prefix()}_{element.name}.csv'
+            with open(f_name, 'w') as g:
+                logging.info(f"Saving data to: {f_name}")
+                csv_writer = csv.writer(g, delimiter=',',)
+                csv_writer.writerow(headers)
+                csv_writer.writerows(data)
+                g.close()
 
-    def threaded_temp_run_test(self):
+    def temp_thread_handler(self):
         self.threads = []
-        for j in self.devices:
-            _ = threading.Thread(target=j.temporary_data_collector(10))
-            logging.info(f"Inside the thread of: {j.name} ")
+        for device in self.devices:
+            device.data_collection_status = True
+            _ = threading.Thread(target=device.continuous_collection)
             self.threads.append(_)
             _.start()
 
-        for j in self.threads:
-            j.join()
+        self.temp_experiment_handler()
 
-        for j in self.devices:
-            print(j.get_complete_array())
+    def temp_experiment_handler(self):
+        for step in self._protocol.get_step_names():
+            _ = threading.Thread(target=self.step_timer, args=(self._protocol.get_step_length(step),))
+            for device in self.devices:
+                device.trial_state = step
+            logging.info(f'Setting {step} step for {self._protocol.get_step_length(step)} s')
+            _.start()
+            _.join()
+        self.temp_end_thread_handler()
+
+    def step_timer(self, sleep_time):
+        time.sleep(sleep_time)
+        logging.debug("Moving onto next step")
+
+    def array_fixer(self, headers, array):
+        _ = np.asarray(headers)
+        _2 = np.asarray(array)
+        print(_)
+
+    def temp_end_thread_handler(self):
+        for device in self.devices:
+            device.data_collection_status = False
+            headers = device.headers
+            data = device.get_array()
+            #self.array_fixer(headers, data)
+            logging.debug(data)
+            self.save_data_to_files(headers, data)
 
 
 if __name__ == '__main__':
-    BFU2 = BFU2()
-
+    DC = data_collector(config='CONFIG/config.json')

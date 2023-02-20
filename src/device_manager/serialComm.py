@@ -15,7 +15,7 @@ from time import sleep
 import serial
 from serial.tools.list_ports import comports
 
-from .constants import portInfo, bfuCommand, bfuTiming, endMsg
+from .constants import bfuCommand, bfuTiming, endMsg
 
 
 class SerialComm:
