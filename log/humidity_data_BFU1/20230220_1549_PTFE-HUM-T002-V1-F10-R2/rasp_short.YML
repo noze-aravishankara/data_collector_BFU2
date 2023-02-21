@@ -1,0 +1,27 @@
+baseline_11:
+  stability_required: False
+  command: Baseline
+  seconds: 60
+  MFC_1: 0
+  MFC_2: 0
+  MFC_3: 0
+  MFC_4: 0
+  MFC_5: 0
+exposure_11:
+  stability_required: False
+  command: Exposure
+  seconds: 60
+  MFC_1: 0
+  MFC_2: 0
+  MFC_3: 0
+  MFC_4: 0
+  MFC_5: 0
+recovery_11:
+  stability_required: False
+  command: Recovery
+  seconds: 60
+  MFC_1: 0
+  MFC_2: 0
+  MFC_3: 0
+  MFC_4: 0
+  MFC_5: 0
