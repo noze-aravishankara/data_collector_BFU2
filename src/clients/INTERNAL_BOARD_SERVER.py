@@ -48,36 +48,24 @@ class INTERNAL_BOARD_SERVER:
 if __name__ =="__main__":
     sensors={
         "S1": {
-            "tx": board.TX2,
-            "rx":  board.RX2,
-            "name": "dev1",
-            "baudrate": 115200
-        },
-        "S2": {
             "tx": board.TX3,
             "rx":  board.RX3,
             "name": "dev2",
             "baudrate": 115200
         },
-        "S3": {
+        "S2": {
             "tx": board.TX4,
             "rx":  board.RX4,
             "name": "dev3",
             "baudrate": 115200
         },
-        "S4": {
+        "S3": {
             "tx": board.TX5,
             "rx":  board.RX5,
             "name": "dev4",
             "baudrate": 115200
         },
-        "S5": {
-            "tx": board.TX6,
-            "rx":  board.RX6,
-            "name": "dev5",
-            "baudrate": 115200
-        },
-        "S6": {
+        "S4": {
             "tx": board.TX8,
             "rx":  board.RX8,
             "name": "dev6",
