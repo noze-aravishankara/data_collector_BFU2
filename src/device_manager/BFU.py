@@ -4,7 +4,7 @@ import sys
 import threading
 
 from .constants import endMsg
-from .serialComm import SerialComm
+from ...MSDC.serialComm import SerialComm
 from .data_manager import data_manager as dm
 
 logging.basicConfig(level=logging.INFO)
