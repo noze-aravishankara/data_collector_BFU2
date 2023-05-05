@@ -76,12 +76,12 @@ if __name__ =="__main__":
     # WORKING CHANNELS ARE:
     # 3, 4, 5, 8
     
-    sensors = {'S1': {
-            'tx': board.TX8,
-            'rx':  board.RX8,
-            'name': "dev1",
-            'baudrate': 115200
-        }}
+    # sensors = {'S1': {
+    #         'tx': board.TX8,
+    #         'rx':  board.RX8,
+    #         'name': "dev1",
+    #         'baudrate': 115200
+    #     }}
 
     server = INTERNAL_BOARD_SERVER(sensors=sensors)
     server.run_status = True

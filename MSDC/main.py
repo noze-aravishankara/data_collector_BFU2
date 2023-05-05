@@ -8,6 +8,7 @@ from datetime import datetime as dt
 import numpy as np
 import serial
 import json
+import atexit
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -19,6 +20,7 @@ class multi_data_collector:
     def __init__(self, config='CONFIG/config.json'):
         self._config = config_parser(config_file_path=config).get_config_as_dict()
         self.run_status = False
+        atexit.register(self.exit_process())
         self.create_data_folder()
         self.device_setup()
         #self.single_time_listener()
@@ -55,22 +57,24 @@ class multi_data_collector:
     def thread_handler(self):
         self.run_status = True
         self.thread = threading.Thread(target=self.continuous_multi_listener)
+        self.thread.daemon = True
         self.thread.start()
 
     def continuous_multi_listener(self):
         while self.run_status:
-            try:
-                if self.device.in_waiting > 0:
-                    _ = json.loads(str(self.device.readline().decode("utf-8")))
-                    logging.debug('Got New Data')
-                    # for sensor in _:
-                    #     _2 = threading.Thread(target=self.dms[sensor].append_file, args=(_['t'],))
-                    #     _2.start()
-            except KeyboardInterrupt:
-                logging.info("--- ENDING DATA COLLECTION ---")
-                self.thread.join()
-                self.run_status = False
-                sys.exit()
+            if self.device.in_waiting > 0:
+                _ = json.loads(str(self.device.readline().decode("utf-8")))
+                logging.debug('Got New Data')
+                # for sensor in _:
+                #     _2 = threading.Thread(target=self.dms[sensor].append_file, args=(_['t'],))
+                #     _2.start()
+            
+            
+    def exit_process(self):
+        logging.info("--- ENDING DATA COLLECTION ---")
+        #self.thread.join()
+        self.run_status = False
+        sys.exit()
 
     def single_time_listener(self):
         headers = False
