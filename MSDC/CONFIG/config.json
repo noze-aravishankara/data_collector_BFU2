@@ -10,6 +10,6 @@
       "device_name": "INTERNAL_TEENSY",
       "data_type": "json"
     },
-    "SENSORS": ["BFU1", "BFU2", "BFU3", "BFU4"]
+    "SENSORS": ["dev1", "dev2", "dev3", "dev4"]
   }
 }

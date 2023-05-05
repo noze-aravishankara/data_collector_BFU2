@@ -8,7 +8,7 @@ from datetime import datetime as dt
 
 import numpy as np
 
-from CONFIG.config_parser import config_par Pser
+from CONFIG.config_parser import config_parser
 from CONFIG.protocol_parser import protocol_parser
 from device_manager.BFU import BFU
 

@@ -50,25 +50,25 @@ if __name__ =="__main__":
         "S1": {
             "tx": board.TX3,
             "rx":  board.RX3,
-            "name": "dev2",
+            "name": "dev1",
             "baudrate": 115200
         },
         "S2": {
             "tx": board.TX4,
             "rx":  board.RX4,
-            "name": "dev3",
+            "name": "dev2",
             "baudrate": 115200
         },
         "S3": {
             "tx": board.TX5,
             "rx":  board.RX5,
-            "name": "dev4",
+            "name": "dev3",
             "baudrate": 115200
         },
         "S4": {
             "tx": board.TX8,
             "rx":  board.RX8,
-            "name": "dev6",
+            "name": "dev4",
             "baudrate": 115200
         }
     }
