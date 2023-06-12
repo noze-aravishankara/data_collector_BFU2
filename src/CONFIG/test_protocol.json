@@ -1,12 +1,12 @@
 {
   "baseline": {
-      "length": 10
+      "length": 3
   },
   "exposure":{
-      "length": 5
+      "length": 3
   },
   "recovery": {
-    "length": 15
+    "length": 3
   }
 }
 

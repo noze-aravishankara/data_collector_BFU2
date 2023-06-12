@@ -1,13 +1,23 @@
 {
   "output_directory": "../output",
   "protocol_file": "CONFIG/test_protocol.yml",
-  "output_file_prefix": "BFU2_TEST",
-  "project_name": "BFU2_PROJECT",
+  "output_file_prefix": "LIQUIDACETONE_TEST",
+  "project_name": "LIQUIDACETONE_PROJECT",
   "devices": {
     "device0": {
-      "com_port": "COM5",
+      "com_port": "/dev/ttyUSB0",
       "baud_rate": 115200,
       "device_name": "BFU1"
+    },
+    "device1": {
+      "com_port": "/dev/ttyUSB1",
+      "baud_rate": 115200,
+      "device_name": "BFU2"
+    },
+    "device2": {
+      "com_port": "/dev/ttyUSB2",
+      "baud_rate": 115200,
+      "device_name": "BFU3"
     }
   }
 }
