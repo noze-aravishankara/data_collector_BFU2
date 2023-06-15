@@ -56,12 +56,12 @@ class BFU:
 
     def update_file_with_headers(self):
         _ = self.get_new_data()
-        _ = [list(d.keys())[0] for d in _['t']]
+        _ = ["Serial Number"]+[list(d.keys())[0] for d in _['t']]
         _.append('Trial State')
         self.update_file(_)
 
     def update_data(self, data):
-        _ = [list(d.values())[0] for d in data['t']]
+        _ = [data["sn"]]+[list(d.values())[0] for d in data['t']]
         _.append(self.trial_state)
         logging.debug(_)
         self.update_file(_)
