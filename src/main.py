@@ -10,6 +10,7 @@ import numpy as np
 
 from CONFIG.config_parser import config_parser
 from CONFIG.protocol_parser import protocol_parser
+from device_manager.mfc_controller import MFC
 from device_manager.BFU import BFU
 
 logging.basicConfig(level=logging.INFO)
@@ -18,7 +19,9 @@ class data_collector:
     def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json', log_level=logging.INFO):
 
         self._config = config_parser(config_file_path=config)
+        self._config_dict = self._config.get_config_as_dict()
         self._protocol = protocol_parser(protocol_file_path=protocol)
+        self._protocol_dict = self._protocol.get_protocol_as_dict()
         self.create_data_folder()
         self.device_setup(log_level)
 
@@ -34,6 +37,9 @@ class data_collector:
                                     name=z,
                                     fname=fname,
                                     log_level=log_level))
+            
+        self.mfc_dict = {device: MFC(port=self._config["MFC"][device]["port"], analyte=self._config["MFC"][device]["analyte"]) for device in self._config["MFC"]}
+
 
     def folder_info(self):
         self.now = dt.now()
@@ -73,8 +79,6 @@ class data_collector:
                 csv_writer.writerows(data)
                 g.close()
 
-
-
     def temp_thread_handler(self):
         self.threads = []
         for device in self.devices:
@@ -90,6 +94,10 @@ class data_collector:
             _ = threading.Thread(target=self.step_timer2, args=(self._protocol.get_step_length(step),))
             for device in self.devices:
                 device.trial_state = step
+            for mfc in self.mfc_dict:
+                value = self._protocol_dict[step]["MFC"][mfc]
+                _2 = threading.Thread(target=self.mfc_dict[mfc].ensure_flow_rate, args=(value,), daemon=True)
+                _2.start()
             logging.info(f'Setting {step} step for {self._protocol.get_step_length(step)} s')
             _.start()
             _.join()

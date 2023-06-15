@@ -8,7 +8,6 @@ from time import sleep
 
 logging.basicConfig(level=logging.INFO)
 
-# POTATO
 class MFC:
     def __init__(self, port, analyte=None):
         _ = ShdlcSerialPort(port=port, baudrate=115200)
