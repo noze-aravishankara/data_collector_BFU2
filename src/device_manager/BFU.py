@@ -47,7 +47,7 @@ class BFU:
         while not self.device.data_available():
             pass
         else:
-            _ = json.loads(self.device.get_data_until(endMsg.END_NVM_LINE))
+            _ = json.loads(self.device.get_data())
             logging.debug(_)
         return _
 

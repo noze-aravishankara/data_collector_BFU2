@@ -19,9 +19,9 @@ class data_collector:
     def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json', log_level=logging.INFO):
 
         self._config = config_parser(config_file_path=config)
-        self._config_dict = self._config.get_config_as_dict()
+        self.config_dict = self._config.get_config_as_dict()
         self._protocol = protocol_parser(protocol_file_path=protocol)
-        self._protocol_dict = self._protocol.get_protocol_as_dict()
+        self.protocol_dict = self._protocol.get_protocol_as_dict()
         self.create_data_folder()
         self.device_setup(log_level)
 
@@ -38,7 +38,7 @@ class data_collector:
                                     fname=fname,
                                     log_level=log_level))
             
-        self.mfc_dict = {device: MFC(port=self._config["MFC"][device]["port"], analyte=self._config["MFC"][device]["analyte"]) for device in self._config["MFC"]}
+        self.mfc_dict = {device: MFC(port=self.config_dict["MFC"][device]["port"], analyte=self.config_dict["MFC"][device]["analyte"]) for device in self.config_dict["MFC"]}
 
 
     def folder_info(self):
@@ -95,7 +95,7 @@ class data_collector:
             for device in self.devices:
                 device.trial_state = step
             for mfc in self.mfc_dict:
-                value = self._protocol_dict[step]["MFC"][mfc]
+                value = self.protocol_dict[step]["MFC"][mfc]
                 _2 = threading.Thread(target=self.mfc_dict[mfc].ensure_flow_rate, args=(value,), daemon=True)
                 _2.start()
             logging.info(f'Setting {step} step for {self._protocol.get_step_length(step)} s')
@@ -126,4 +126,4 @@ class data_collector:
 
 if __name__ == '__main__':
     level = logging.DEBUG
-    DC = data_collector(config='CONFIG/config_single.json', protocol='CONFIG/test_protocol.json', log_level=level)
+    DC = data_collector(config='CONFIG/config_with_mfc.json', protocol='CONFIG/test_protocol.json', log_level=level)

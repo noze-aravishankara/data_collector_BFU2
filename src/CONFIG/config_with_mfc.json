@@ -4,16 +4,20 @@
   "output_file_prefix": "PTFE-HUM-T005-V2-F10-R2",
   "project_name": "BFU2_PROJECT",
   "devices": {
-    
+    "device0": {
+      "com_port": "/dev/ttyUSB0",
+      "baud_rate": 115200,
+      "device_name": "BFU1"
+    }
   },
   "MFC":{
-      "MFC1": {
-        "port": "COM27",
-        "analyte": "acetone"
-      },
-      "MFC2": {
-        "port": "COM28",
-        "analyte": "air"
-      }
+    "MFC1": {
+      "port": "/dev/ttyUSB1",
+      "analyte": "acetone"
+    },
+    "MFC2": {
+      "port": "/dev/ttyUSB2",
+      "analyte": "air"
+    }
     }
 }
