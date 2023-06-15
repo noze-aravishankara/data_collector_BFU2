@@ -1,8 +1,8 @@
 {
   "output_directory": "../output",
   "protocol_file": "CONFIG/rasp_long.yml",
-  "output_file_prefix": "PTFE-HUM-T005-V2-F10-R2",
-  "project_name": "BFU2_PROJECT",
+  "output_file_prefix": "ADI-TEST",
+  "project_name": "ACME",
   "devices": {
     "device0": {
       "com_port": "/dev/ttyUSB0",
@@ -19,5 +19,9 @@
       "port": "/dev/ttyUSB2",
       "analyte": "air"
     }
-    }
+  },
+  "PID": {
+    "port": "/dev/ttyACM0",
+    "baudrate": 115200
+  }
 }

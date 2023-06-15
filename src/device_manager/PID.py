@@ -8,10 +8,10 @@ from .constants import endMsg
 from .serialComm import SerialComm
 from .data_manager import data_manager as dm
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
-class BFU:
+class PID:
     def __init__(self, port='COM5', baudrate=115200, name='BFU1s', fname='../../output/BASE.csv', log_level=logging.INFO):
         self.port = port
         self.baudrate = baudrate
@@ -55,13 +55,13 @@ class BFU:
 
     def update_file_with_headers(self):
         _ = self.get_new_data()
-        _ = ["Timestamp (YYMMDDHHMMSS)", "Serial Number"]+[list(d.keys())[0] for d in _['t']] + ["Trial State"]
+        _ = ["Timestamp (YYMMDDHHMMSS)", "Concentration (PPM)", "Converted Voltage (mV)", "Raw Voltage (V)", "Trial State"]
         # _.append('Trial State')
         self.update_file(_)
 
     def update_data(self, data):
-        _ = [self.get_current_formatted_time(), data["sn"]]+[list(d.values())[0] for d in data['t']]
-        _.append(self.trial_state)
+        _ = [self.get_current_formatted_time()]+[list(data)] + [self.trial_state]
+        # _.append(self.trial_state)
         logging.debug(_)
         self.update_file(_)
 

@@ -12,6 +12,7 @@ from CONFIG.config_parser import config_parser
 from CONFIG.protocol_parser import protocol_parser
 from device_manager.mfc_controller import MFC
 from device_manager.BFU import BFU
+from device_manager.PID import PID
 
 logging.basicConfig(level=logging.INFO)
 
@@ -37,8 +38,13 @@ class data_collector:
                                     name=z,
                                     fname=fname,
                                     log_level=log_level))
-            
+        self.pid = PID(port=self.config_dict["PID"]["port"],
+                       baudrate=self.config_dict["PID"]["baudrate"],
+                       fname=f'{self.directory}/{self.now_}_{self._config.get_output_file_prefix()}_PID.csv')
+        
+        self.devices.append(self.pid)
         self.mfc_dict = {device: MFC(port=self.config_dict["MFC"][device]["port"], analyte=self.config_dict["MFC"][device]["analyte"]) for device in self.config_dict["MFC"]}
+        
 
 
     def folder_info(self):
@@ -86,7 +92,6 @@ class data_collector:
             _ = threading.Thread(target=device.continuous_collection)
             self.threads.append(_)
             _.start()
-
         self.temp_experiment_handler()
 
     def temp_experiment_handler(self):

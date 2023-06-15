@@ -6,7 +6,7 @@ from sensirion_shdlc_sfc5xxx import Sfc5xxxShdlcDevice, Sfc5xxxScaling, \
 import logging
 from time import sleep
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 class MFC:
     def __init__(self, port, analyte=None):
