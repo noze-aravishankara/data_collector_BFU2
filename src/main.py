@@ -14,7 +14,7 @@ from device_manager.mfc_controller import MFC
 from device_manager.BFU import BFU
 from device_manager.PID import PID
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 class data_collector:
     def __init__(self, config='CONFIG/config.json', protocol='CONFIG/test_protocol.json', log_level=logging.INFO):
@@ -23,6 +23,7 @@ class data_collector:
         self.config_dict = self._config.get_config_as_dict()
         self._protocol = protocol_parser(protocol_file_path=protocol)
         self.protocol_dict = self._protocol.get_protocol_as_dict()
+        logging.info(self.protocol_dict)
         self.create_data_folder()
         self.device_setup(log_level)
 
@@ -38,14 +39,14 @@ class data_collector:
                                     name=z,
                                     fname=fname,
                                     log_level=log_level))
+        
         self.pid = PID(port=self.config_dict["PID"]["port"],
                        baudrate=self.config_dict["PID"]["baudrate"],
+                       name="PID",
                        fname=f'{self.directory}/{self.now_}_{self._config.get_output_file_prefix()}_PID.csv')
         
         self.devices.append(self.pid)
         self.mfc_dict = {device: MFC(port=self.config_dict["MFC"][device]["port"], analyte=self.config_dict["MFC"][device]["analyte"]) for device in self.config_dict["MFC"]}
-        
-
 
     def folder_info(self):
         self.now = dt.now()
@@ -89,7 +90,7 @@ class data_collector:
         self.threads = []
         for device in self.devices:
             device.data_collection_status = True
-            _ = threading.Thread(target=device.continuous_collection)
+            _ = threading.Thread(target=device.continuous_collection, daemon=True)
             self.threads.append(_)
             _.start()
         self.temp_experiment_handler()
@@ -126,7 +127,9 @@ class data_collector:
     def temp_end_thread_handler(self):
         for device in self.devices:
             device.data_collection_status = False
+        # self.pid.stop_data_collection()
         logging.info('--------DONE DATA COLLECTION---------')
+        sys.exit()
 
 
 if __name__ == '__main__':

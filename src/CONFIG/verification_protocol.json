@@ -1,0 +1,31 @@
+{
+  "baseline": {
+    "length": 4,
+    "MFC": {
+      "MFC1": 0,
+      "MFC2": 0
+    }
+  },
+  "exposure":{
+    "length": 5,
+    "MFC": {
+      "MFC1": 0,
+      "MFC2": 0
+    }
+  },
+  "recovery": {
+    "length": 6,
+    "MFC": {
+      "MFC1": 0,
+      "MFC2": 0
+    }
+  },
+  "end": {
+    "length": 2,
+    "MFC": {
+      "MFC1": 0,
+      "MFC2": 0
+    }
+  }
+}
+

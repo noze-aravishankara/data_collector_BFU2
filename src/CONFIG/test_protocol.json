@@ -1,23 +1,51 @@
 {
   "baseline": {
-    "length": 3,
+    "length": 600,
     "MFC": {
       "MFC1": 0,
+      "MFC2": 150
+    }
+  },
+  "exposure1":{
+    "length": 600,
+    "MFC": {
+      "MFC1": 150,
       "MFC2": 0
     }
   },
-  "exposure":{
-    "length": 3,
+  "exposure2":{
+    "length": 600,
     "MFC": {
       "MFC1": 0,
+      "MFC2": 150
+    }
+  },
+  "exposure3":{
+    "length": 600,
+    "MFC": {
+      "MFC1": 150,
       "MFC2": 0
     }
+  },
+  "exposure4":{
+    "length": 600,
+    "MFC": {
+      "MFC1": 0,
+      "MFC2": 150
+    }
+  },
+  "exposure5":{
+    "length": 600,
+    "MFC": {
+      "MFC1": 150,
+      "MFC2": 0
+      }
   },
   "recovery": {
-    "length": 3,
+    "length": 600,
     "MFC": {
       "MFC1": 0,
-      "MFC2": 0
+      "MFC2": 150
     }
   },
   "end": {

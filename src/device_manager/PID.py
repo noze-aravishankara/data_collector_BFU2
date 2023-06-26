@@ -20,6 +20,8 @@ class PID:
         self.trial_state = 'pre-baseline'
         self.data_collection_status = False
 
+        logging.debug(f"{self.name} trying to connect")
+
         try:
             self.device = self.connect_to_device()
             logging.info(f'Successfully connected to {self.name} on {self.port}')
@@ -30,6 +32,8 @@ class PID:
         self.file_setup(fname)
         self.update_file_with_headers()
         logging.debug('Added headers')
+
+        logging.debug(f"{self.name} trying to connect")
 
     def connect_to_device(self):
         return SerialComm(self.port, self.baudrate)
@@ -46,7 +50,8 @@ class PID:
         while not self.device.data_available():
             pass
         else:
-            _ = json.loads(self.device.get_data())
+            #_ = json.loads(self.device.get_data())
+            _ = self.device.get_data().strip().split(" ")
             logging.debug(_)
         return _
 
@@ -75,13 +80,24 @@ class PID:
         second = str(now.second).zfill(2)   # Pad second with leading zeros if needed
         return year + month + day + hour + minute + second
 
+    def stop_data_collection(self):
+        logging.info(f"Stopping {self.name}")
+        self.data_collection_status = False
+    
     def continuous_collection(self):
         while self.data_collection_status:
             self.get_new_values()
         logging.info(f"Exiting Continuous Data Collection Loop for {self.name}")
 
+    def range_collection(self):
+        _ = []
+        for i in range(10):
+            _.append(self.get_new_data())
+
+        print(_)
+
 
 if __name__ == '__main__':
-    A = BFU('COM5', 115200, 'BFU1')
-    B = A.range_collection(10)
+    A = PID(port='/dev/ttyACM0', baudrate=115200, name='PID', fname='test.csv')
+    B = A.range_collection()
     print(B)

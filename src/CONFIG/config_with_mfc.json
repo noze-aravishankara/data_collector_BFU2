@@ -1,22 +1,22 @@
 {
   "output_directory": "../output",
   "protocol_file": "CONFIG/rasp_long.yml",
-  "output_file_prefix": "ADI-TEST",
-  "project_name": "ACME",
+  "output_file_prefix": "Acetone_5ppm",
+  "project_name": "Acetone",
   "devices": {
     "device0": {
       "com_port": "/dev/ttyUSB0",
       "baud_rate": 115200,
-      "device_name": "BFU1"
-    }
+      "device_name": "board 0525-A13"
+      }
   },
   "MFC":{
     "MFC1": {
-      "port": "/dev/ttyUSB1",
+      "port": "/dev/ttyUSB2",
       "analyte": "acetone"
     },
     "MFC2": {
-      "port": "/dev/ttyUSB2",
+      "port": "/dev/ttyUSB1",
       "analyte": "air"
     }
   },
